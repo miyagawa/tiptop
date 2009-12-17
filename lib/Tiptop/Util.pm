@@ -65,7 +65,7 @@ SQL
 INSERT INTO person (api_id, display_name, avatar_uri) VALUES (?, ?, ?)
 SQL
         $row = {
-            person_id       => $dbh->{mysql_insertid},
+            person_id       => last_id($dbh),
             api_id          => $api_id,
             display_name    => $display_name,
             avatar_uri      => $avatar_uri,
@@ -124,7 +124,7 @@ SQL
         $dbh->do( <<SQL, undef, $row->{api_id}, $row->{person_id}, $row->{title}, $row->{content}, $row->{permalink}, $row->{created}, $row->{favorite_count}, $row->{links_json}, $row->{object_type} );
 INSERT INTO asset (api_id, person_id, title, content, permalink, created, favorite_count, links_json, object_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
-        $row->{asset_id} = $dbh->{mysql_insertid};
+        $row->{asset_id} = last_id($dbh);
     }
     return $row;
 }
@@ -235,6 +235,11 @@ HTML
     }
 
     return \%data;
+}
+
+sub last_id {
+    my $dbh = shift;
+    $dbh->{Driver}{Name} =~ /mysql/ ? $dbh->{mysql_insertid} : $dbh->sqlite_last_insert_rowid;
 }
 
 1;

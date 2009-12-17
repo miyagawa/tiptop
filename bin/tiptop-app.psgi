@@ -6,6 +6,7 @@ use Find::Lib '../lib';
 use Tiptop::Util;
 use DateTime;
 use DateTime::Format::Mail;
+use DateTime::Format::ISO8601;
 use JSON;
 use List::Util qw( first );
 use Plack::App::File;
@@ -44,7 +45,7 @@ SELECT a.asset_id,
        a.content,
        a.permalink,
        a.favorite_count,
-       UNIX_TIMESTAMP(CONVERT_TZ(a.created, '+00:00', 'SYSTEM')) AS published,
+       a.created AS published,
        a.links_json,
        a.object_type AS type,
        p.api_id AS person_api_id,
@@ -66,7 +67,7 @@ SQL
 
         $row->{favorited_by} = [];
 
-        my $dt = DateTime->from_epoch( epoch => $row->{published} );
+        my $dt = DateTime::Format::ISO8601->parse_datetime($row->{published});
         $row->{published} = {
             iso8601 => $dt->iso8601,
             web     => DateTime::Format::Mail->format_datetime( $dt ),

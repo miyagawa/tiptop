@@ -28,10 +28,12 @@ while ( my $row = $sth->fetchrow_hashref ) {
         my $person =
             Tiptop::Util->find_or_create_person_from_api( $entry->{author} );
 
-        my $rv = $dbh->do( <<SQL, undef, $row->{asset_id}, $person->{person_id}, $entry->{urlId} );
-INSERT IGNORE INTO favorited_by (asset_id, person_id, api_id) VALUES (?, ?, ?)
+        try {
+            my $rv = $dbh->do( <<SQL, undef, $row->{asset_id}, $person->{person_id}, $entry->{urlId} );
+INSERT INTO favorited_by (asset_id, person_id, api_id) VALUES (?, ?, ?)
 SQL
-        debug "$row->{asset_id} $person->{person_id} $entry->{urlId}: $rv";
+            debug "$row->{asset_id} $person->{person_id} $entry->{urlId}: $rv";
+        };
     }
     
     $dbh->do( <<SQL, undef, $faved->{totalResults}, $row->{asset_id} );

@@ -21,11 +21,12 @@ Tiptop itself is pure Perl, but it has a number of dependencies beyond core
 Perl. You can guarantee that those dependencies are installed by running the
 `Makefile.PL`, which will complain for all dependencies that aren't installed.
 
-Tiptop also requires a MySQL database to store post & user content locally.
-The schema for that database is in `tiptop.sql`:
+Tiptop also requires a MySQL or SQLite database to store post & user
+content locally.  The schema for that database is in `tiptop.mysql` or
+`tiptop.sqlite` in `sql/` directory:
 
-    mysql -u username tiptop < tiptop.sql
-
+    mysql -u username tiptop < sql/tiptop.mysql
+    sqlite3 tiptop.db < sql/tiptop.sqlite
 
 Configuring Tiptop
 ------------------
@@ -38,6 +39,7 @@ application root:
 
     [database]
     dsn=dbi:mysql:database=tiptop
+    # dsn=dbi:SQLite:dbname=tiptop.db
     username=username
     password=password
     
